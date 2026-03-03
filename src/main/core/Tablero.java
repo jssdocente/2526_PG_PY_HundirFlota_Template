@@ -1,9 +1,12 @@
 package main.core;
 
+import main.util.ConsoleHelper;
+
 /**
  * PLANTILLA PARA EL ALUMNO.
  * 
- * Esta clase gestiona la cuadrícula de juego y la lógica de combate sobre las casillas.
+ * Esta clase gestiona la cuadrícula de juego y la lógica de combate sobre las
+ * casillas.
  */
 public class Tablero implements IAtacable {
 
@@ -20,19 +23,21 @@ public class Tablero implements IAtacable {
 
     /**
      * Intenta colocar un barco. Debe verificar límites, solapamientos y vecindad.
+     * 
      * @return true si se pudo colocar, false en caso contrario.
      */
     public boolean colocarBarco(Barco b, Coordenada inicio, DireccionEnum d) {
         // // TODO:
         // // 1. Obtener tamaño del barco, fila y columna de inicio.
-        // // 2. PRIMER BUCLE (Validación): Recorrer las posiciones que ocuparía el barco
-        // //    según la dirección y comprobar:
-        // //    a) ¿Está dentro del tablero? (usar esCoordenadaValida)
-        // //    b) ¿Hay ya otro barco en esa casilla?
-        // //    c) ¿Hay barcos en las casillas adyacentes? (regla de no barcos pegados)
+        // // 2. PRIMER BUCLE (Validación): Recorrer las posiciones que ocuparía el
+        // barco
+        // // según la dirección y comprobar:
+        // // a) ¿Está dentro del tablero? (usar esCoordenadaValida)
+        // // b) ¿Hay ya otro barco en esa casilla?
+        // // c) ¿Hay barcos en las casillas adyacentes? (regla de no barcos pegados)
         // // 3. Si alguna comprobación falla, retornar false inmediatamente.
         // // 4. SEGUNDO BUCLE (Colocación): Si todo es válido, volver a recorrer y
-        // //    llamar a casilla.colocarBarco(b) en cada posición.
+        // // llamar a casilla.colocarBarco(b) en cada posición.
         // // 5. Retornar true.
         return false;
     }
@@ -45,33 +50,48 @@ public class Tablero implements IAtacable {
         InformeDisparo informe = new InformeDisparo();
 
         // // TODO:
-        // // 1. Determinar qué coordenadas se ven afectadas según el 'arma' (TipoAtaqueEnum).
-        // //    - NORMAL: Solo la coordenada 'c'.
-        // //    - RADAR: Zona 3x3 alrededor de 'c'.
-        // //    - CRUZ: Toda la fila y toda la columna de 'c'.
+        // // 1. Determinar qué coordenadas se ven afectadas según el 'arma'
+        // (TipoAtaqueEnum).
+        // // - NORMAL: Solo la coordenada 'c'.
+        // // - RADAR: Zona 3x3 alrededor de 'c'.
+        // // - CRUZ: Toda la fila y toda la columna de 'c'.
         // // 2. Recorrer las coordenadas afectadas:
-        // //    - Si la coordenada es válida:
-        // //      a) Obtener la casilla correspondiente.
-        // //      b) Llamar a casilla.recibirImpacto() (o consultar si es radar).
-        // //      c) Añadir el resultado al 'informe' usando informe.agregar(...)
-        // //      d) Si un barco se hunde, marcar informe.setHundido(true).
-        
+        // // - Si la coordenada es válida:
+        // // a) Obtener la casilla correspondiente.
+        // // b) Llamar a casilla.recibirImpacto() (o consultar si es radar).
+        // // c) Añadir el resultado al 'informe' usando informe.agregar(...)
+        // // d) Si un barco se hunde, marcar informe.setHundido(true).
+
         return informe;
     }
 
     /**
-     * Dibuja el tablero en la consola usando ConsoleHelper.
-     * @param esModoRadar true para ocultar barcos enemigos, false para ver todo.
+     * Dibuja el tablero en consola.
+     * 
+     * @param esModoRadar Si es true, NO muestra los barcos (vista del rival).
      */
     public void imprimirTablero(boolean esModoRadar) {
-        // // TODO:
-        // // 1. Imprimir cabecera de letras (A B C...).
-        // // 2. Recorrer filas y columnas de la matriz 'celdas'.
-        // // 3. Para cada casilla:
-        // //    - Obtener su EstadoCasillaEnum.
-        // //    - Si estamos en modo radar y el estado es BARCO -> Mostrar como AGUA (ocultar).
-        // //    - En cualquier otro caso -> Mostrar símbolo y color real según el estado.
-        // // 4. Usar ConsoleHelper.write() y ConsoleHelper.cell() para un acabado profesional.
+        ConsoleHelper.write("   ");
+        for (int c = 0; c < TAMAÑO; c++) {
+            ConsoleHelper.writeColor("  " + (char) ('A' + c) + " ", ConsoleHelper.CYAN);
+        }
+        ConsoleHelper.writeLn("");
+
+        for (int f = 0; f < TAMAÑO; f++) {
+            ConsoleHelper.writeColor(String.format("%2d ", f + 1), ConsoleHelper.CYAN);
+            for (int c = 0; c < TAMAÑO; c++) {
+                EstadoCasillaEnum estado = celdas[f][c].getEstado();
+                String simbolo;
+
+                if (esModoRadar && estado == EstadoCasillaEnum.BARCO) {
+                    simbolo = EstadoCasillaEnum.AGUA.getSimbolo(true);
+                } else {
+                    simbolo = estado.getSimbolo(true);
+                }
+                ConsoleHelper.write("[" + simbolo + "]");
+            }
+            ConsoleHelper.writeLn("");
+        }
     }
 
     /**
